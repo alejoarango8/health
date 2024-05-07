@@ -161,7 +161,7 @@ def feature_sel(df, num_feat_kbest=20, num_rfe=15, sample=None, plot_metric="mut
         num_rfe: Variables a tener en cuenta con el metodo RFE
         plot_metric: Metrica por la cual se ordernaran los graficos
         plot: True si se quiere visualizar los resultados obtenidos
-        
+
     """
     
     # DataFrame para las variables
@@ -317,7 +317,7 @@ def feature_sel(df, num_feat_kbest=20, num_rfe=15, sample=None, plot_metric="mut
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
             
             # Entrenar el modelo y hacer predicciones
-            model = fit_model(df_train, vars=vars, clf=clf, sample=sample)
+            model = fit_model(df_train, vars=vars, clf=clf)
             pred = model.predict(X_test)
             
             # Calcular el error absoluto medio y agregarlo al diccionario de info
@@ -339,7 +339,7 @@ def feature_sel(df, num_feat_kbest=20, num_rfe=15, sample=None, plot_metric="mut
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
         
         # Entrenar el modelo y hacer predicciones
-        model = fit_model(df_train, vars=vars, clf=clf, sample=sample)
+        model = fit_model(df_train, vars=vars, clf=clf)
         pred = model.predict(X_test)
         
         # Calcular el error absoluto medio y agregarlo al diccionario de info
@@ -353,9 +353,6 @@ def feature_sel(df, num_feat_kbest=20, num_rfe=15, sample=None, plot_metric="mut
 
     # Iterar sobre cada clasificador usando todas las varaibles elegidas antes de algoritmos de seleccion
     for clf in clfs:
-
-        # Extraer variables seleccionadas
-        vars = n_select.index.values.tolist()
         
         # Extraer variables en X y variable objetivo en horas
         X = df_train.drop([target, "Atencion", "Ingreso"], axis=1)
@@ -365,7 +362,7 @@ def feature_sel(df, num_feat_kbest=20, num_rfe=15, sample=None, plot_metric="mut
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
         
         # Entrenar el modelo y hacer predicciones
-        model = fit_model(df_train, vars=vars, clf=clf, sample=sample)
+        model = fit_model(df_train, vars=vars, clf=clf)
         pred = model.predict(X_test)
         
         # Calcular el error absoluto medio y agregarlo al diccionario 'every'
@@ -431,7 +428,7 @@ def hyper_tunning(df):
     target = "LOS"
 
     # Extraer variables en X y variable objetivo en horas
-    X = df.drop([target, "Atencion", "Ingreso"], axis=1)
+    X = df[features]
     y = df[target].dt.total_seconds() / 3600
 
     # Dividir los datos en conjuntos de entrenamiento y prueba
